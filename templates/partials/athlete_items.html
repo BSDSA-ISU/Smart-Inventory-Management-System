@@ -1,0 +1,10 @@
+{% for a in athletes %}
+    <li>
+        <a href="/athlete/{{ a[0] }}">{{ a[1] }}</a>
+        <form action="/delete/{{ a[0] }}" method="POST" style="display:inline;">
+            <button type="submit" class="small-delete-btn" onclick="return confirm('Delete this athlete?')">
+                🗑 Delete
+            </button>
+        </form>
+    </li>
+{% endfor %}

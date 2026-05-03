@@ -17,7 +17,6 @@
                 <img src="/static/logo.png" style="border-radius: 50%;">
                 <span>Athlete list</span>
             </div>
-
             <nav>
                 <a href="/">Home</a>
             </nav>
@@ -27,15 +26,16 @@
     <main class="container">
         <section class="card">
             <form method="GET" action="/athletes" class="form">
-            <input 
-                type="text" 
-                name="search" 
-                placeholder="Search athlete..." 
-                value="{{ search }}"
-            >
+                <h2>List of Athletes</h2>
+                <input 
+                    type="text" 
+                    name="search" 
+                    placeholder="Search athlete..." 
+                    value="{{ search }}"
+                >
+
             <button type="submit">Search</button>
         </form>
-        <h2>👥 Athlete List</h2>
 
         <ul class="athlete-list">
             {% for a in athletes %}
