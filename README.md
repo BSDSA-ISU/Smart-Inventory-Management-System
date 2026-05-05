@@ -6,7 +6,7 @@ official System logo:
 
 ![alt text](./Kaguya.gif)
 
-![ngrok mirror](https://modern-blowfish-virtually.ngrok-free.app)
+[ngrok mirror](https://modern-blowfish-virtually.ngrok-free.app)
 
 ## Members
 
