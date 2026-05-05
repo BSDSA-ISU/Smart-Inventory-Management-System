@@ -1,7 +1,9 @@
 erDiagram
-
     ATHLETES {
         INT athlete_id PK
+        VARCHAR username UK
+        VARCHAR password
+        ENUM role
         VARCHAR name
         INT age
         ENUM sex
@@ -51,7 +53,7 @@ erDiagram
         DATE end_date
     }
 
-    ATHLETES ||--o{ NUTRITION_LOGS : has
-    ATHLETES ||--o{ TRAINING_SESSIONS : performs
-    ATHLETES ||--o{ RECOVERY_LOGS : records
-    ATHLETES ||--o{ GOALS : sets
+    ATHLETES ||--o{ NUTRITION_LOGS : "logs nutrition"
+    ATHLETES ||--o{ TRAINING_SESSIONS : "performs sessions"
+    ATHLETES ||--o{ RECOVERY_LOGS : "records recovery"
+    ATHLETES ||--o{ GOALS : "tracks goals"
