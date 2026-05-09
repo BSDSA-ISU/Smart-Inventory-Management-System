@@ -2,7 +2,7 @@ CREATE TABLE IF NOT EXISTS athletes (
     athlete_id INT AUTO_INCREMENT PRIMARY KEY,
     username VARCHAR(100) UNIQUE NOT NULL, -- Added for login
     password VARCHAR(255) NOT NULL,        -- Added for login
-    role ENUM('admin', 'user') DEFAULT 'user', -- Added for permissions
+    role ENUM('admin', 'user', 'owner') DEFAULT 'user', -- Added for permissions
     name VARCHAR(100) NOT NULL,            -- Kept separate as requested
     age INT,
     sex ENUM('Male', 'Female', 'Other'),
@@ -56,14 +56,7 @@ CREATE TABLE IF NOT EXISTS goals (
     FOREIGN KEY (athlete_id) REFERENCES athletes(athlete_id) ON DELETE CASCADE
 );
 
-CREATE TABLE users (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    username VARCHAR(100) UNIQUE,
-    password VARCHAR(255),
-    role ENUM('admin', 'user') DEFAULT 'user'
-);
-
-CREATE TABLE team_members (
+CREATE TABLE IF NOT EXISTS team_members (
     id INT AUTO_INCREMENT PRIMARY KEY,
     full_name VARCHAR(100) NOT NULL,
     username VARCHAR(50),
@@ -74,9 +67,6 @@ CREATE TABLE team_members (
     facebook_link VARCHAR(255),
     accent_color VARCHAR(7) DEFAULT '#10b981' -- Emerald green default
 );
-
-
-TRUNCATE TABLE team_members;
 
 TRUNCATE TABLE team_members;
 
@@ -107,7 +97,7 @@ VALUES
     'Seb Salamatin', 
     'sebastiengabriel.buenosalamatin#', 
     'Low Cortisol Member', 
-    'DSA student from Alicia Isabela.', 
+    'not provided.', 
     '/static/members/seb.jpg', 
     NULL, 
     'https://www.facebook.com/sebastiengabriel.buenosalamatin#', 
@@ -117,9 +107,30 @@ VALUES
     'Jl Imperial', 
     'jhae.elle12', 
     'Tester', 
-    'DSA student from Alicia Isabela.', 
+    'Not provided.', 
     '/static/members/jl.jpg', 
     NULL, 
     'https://www.facebook.com/jhae.elle12', 
     '#00ffff'
 );
+
+insert INTO athletes (
+    username,
+    password,
+    role,
+    name,
+    age,
+    sex,
+    weight,
+    height
+)
+VALUES (
+    "admin",
+    "admin",
+    "admin",
+    "name admin",
+    9999,
+    "Female",
+    999.00,
+    999.00
+)

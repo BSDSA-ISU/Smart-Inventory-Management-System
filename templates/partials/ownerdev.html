@@ -1,0 +1,19 @@
+{% if current_user.role == 'owner' %}
+<section class="card">
+    <h3>System Diagnostics</h3>
+    <p>OS: {{ os_name }} {{ os_release }}</p>
+    <p>Kernel: {{ os_version }}</p>
+    <p>Arch: {{ arch }}</p>
+
+    <p>Python: {{ python_version }}</p>
+    <p>Flask: {{ flask_version }}</p>
+
+    <p>CPU Usage: {{ cpu_usage }}%</p>
+    <p>RAM Usage: {{ ram_usage }}%</p>
+
+    <p>Boot Time: {{ boot_time }}</p>
+    <p>MySQL Version: {{ mysql_version }}</p>
+    <p>LOC: {{ loc }}</p>
+    <p>Latency: {{ request.headers.get('X-Latency') }}</p>
+</section>
+{% endif %}

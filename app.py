@@ -1,9 +1,12 @@
-from flask import Flask, render_template, request, redirect, flash
-from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user
+from datetime import datetime
+from flask import Flask, render_template, request, redirect, flash, g
+import time
+import flask
+from flask_login import LoginManager, UserMixin, current_user, login_user, login_required, logout_user
 import matplotlib
 matplotlib.use("Agg")
-import matplotlib.pyplot as plt
 import os
+import sys
 import pymysql
 from dotenv import load_dotenv
 from lib.nutrition import nutrition_bp, edit_nutrition_single_bp
@@ -12,6 +15,9 @@ from lib.training import training_bp, edit_training_single_bp
 from lib.athletes import athlete_list_bp, add_athlete_bp, delete_athlete_bp, edit_athlete_bp
 from lib.graphs import generate_recovery_chart, generate_training_chart, generate_calorie_chart
 from lib.goals import goals_bp, edit_goals_single_bp
+from lib.line_count import get_loc as count
+import platform
+import psutil
 
 load_dotenv()
 
@@ -27,6 +33,8 @@ app = Flask(__name__)
 app.secret_key = "Koishi11"
 
 # Register components
+
+# ADmin
 
 ## Managing athletes(CRUD)
 app.register_blueprint(athlete_list_bp)
@@ -132,20 +140,71 @@ def logout():
     logout_user()
     return redirect("/login")
 
+# Simple timer
+@app.before_request
+def start_timer():
+    g.start_time = time.time()
+
+# simple timer
+
+@app.after_request
+def add_latency(response):
+    if hasattr(g, "start_time"):
+        response.headers["X-Latency"] = str(round((time.time() - g.start_time) * 1000, 2)) + "ms"
+    return response
+
 # Landing pege
-@app.route("/", methods=["GET", "POST"])
+@app.route("/", methods=["GET"])
 def index():
     conn = connect_db()
     cur = conn.cursor()
-    
-    cur.execute("""SELECT COUNT(*) FROM athletes;""")
+
+    cur.execute("SELECT COUNT(*) FROM athletes;")
     user_count = cur.fetchone()
+
     cur.execute("SELECT * FROM team_members")
     members = cur.fetchall()
 
-    print(members)
-    
-    return render_template("index.html", usercount=user_count, members=members)
+    # default context (everyone gets this)
+    context = {
+        "usercount": user_count,
+        "members": members
+    }
+
+    # 🔥 OWNER ONLY BLOCK (heavy stuff here)
+    if current_user.is_authenticated and current_user.role == "owner":
+        line_of_code = count()
+        db_info = conn.get_host_info() if hasattr(conn, "get_host_info") else "unknown"
+
+        cur.execute("SELECT VERSION();")
+        mysql_version = cur.fetchone()
+
+        context.update({
+            "db_host": conn.host if hasattr(conn, "host") else "unknown",
+            "db_user": conn.user if hasattr(conn, "user") else "unknown",
+            "db_server_info": conn.get_server_info() if hasattr(conn, "get_server_info") else "pymysql",
+            "mysql_version": mysql_version,
+            "loc": line_of_code,
+        
+            # 🖥 OS INFO
+            "os_name": platform.system(),
+            "os_release": platform.release(),
+            "os_version": platform.version(),
+            "arch": platform.machine(),
+        
+            # 🐍 PYTHON / FLASK
+            "python_version": sys.version.split()[0],
+            "flask_version": flask.__version__,  # pyright: ignore[reportAttributeAccessIssue]
+        
+            # ⚙️ SYSTEM USAGE
+            "cpu_usage": psutil.cpu_percent(interval=0.2),
+            "ram_usage": psutil.virtual_memory().percent,
+        
+            # ⏱ UPTIME
+            "boot_time": datetime.fromtimestamp(psutil.boot_time()).strftime("%Y-%m-%d %H:%M:%S"),
+        })
+
+    return render_template("index.html", **context)
 
 @app.route("/athlete/<int:athlete_id>")
 def athlete(athlete_id):

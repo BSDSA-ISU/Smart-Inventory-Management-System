@@ -15,9 +15,9 @@
 <header class="navbar">
     <div class="nav-container">
         <div class="logo">
-            <img src="{{ '/static/admin.jpg' if current_user.role == 'admin' else '/static/logo.png' }}" style="border-radius: 50%;">
+            <img src="{{ '/static/admin.jpg' if current_user.role == 'admin' or current_user.role == 'owner' else '/static/logo.png' }}" style="border-radius: 50%;">
             {% if current_user.is_authenticated %}
-                {% if current_user.role == 'admin' %}
+                {% if current_user.role == 'admin' or current_user.role == 'owner' %}
                     <span style="color: pink; font-weight: bold;">Welcome back, {{ current_user.name }} onee-chan!!</span>
                     <a href="/logout">Logout</a>
                 {% else %}
@@ -52,6 +52,10 @@
         <p>Track. Improve.</p>
 
         <img class="mascot kaguya Houraisan" src="/static/Kaguya.gif">
+        <p style="font-size: small; color: gray;">Kaguya Houraisan</p>
+        {% if current_user.role == 'owner' %}
+            <p>Total LOC: {{ loc }}</p>
+        {% endif %}
     </section>
 
     <div class="hero">
@@ -112,6 +116,9 @@
 
         </div>
     </section>
+    {% if current_user.role == 'owner' %}
+        {% include 'partials/ownerdev.html' %}
+    {% endif %}
 
     <section class="container">
         <div class="hero">
@@ -125,13 +132,25 @@
 
 </main>
 
-<footer>
+<footer class="footer">    
+    <div class="footer-top">
+        <div class="powered-by">
+            <p class="title">Powered by</p>
+
+            <a href="https://flask.palletsprojects.com/en/stable/" target="_blank" class="link"> Flask</a>
+            <a href="https://python.org/" target="_blank" class="link"> Python</a>
+            <a href="https://github.com/BSDSA-ISU/InormationManagement-project" target="_blank" class="link"> Github source code</a>
+        </div>
+
+    </div>
+    <div class="footer-bottom">
     <small>
         Copyright (c) 2026 Cyrus Troy and BSDSA-ISU <br>
         Licensed under the MIT License
         <br>
         Touhou Project © Team Shanghai Alice (ZUN). Fan content mascot is used for educational purposes only.
     </small>
+    </div>
 </footer>
 
 </body>
