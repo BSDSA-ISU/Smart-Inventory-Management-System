@@ -227,23 +227,27 @@ input:focus {
 }
 
 .powered-by {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr); 
+    gap: 15px;
+    align-items: center;
 }
 
 .powered-by .title {
+    grid-column: 1 / -1; 
     font-weight: 700;
     color: var(--text);
+    margin-bottom: 5px;
 }
 
-/* this is the "tabbed" indentation */
 .powered-by .link {
-    padding-left: 20px;   /* 👈 the tab effect */
+    padding-left: 20px;
     color: var(--muted);
     text-decoration: none;
     font-size: 0.9rem;
     position: relative;
+    width: fit-content;
+    white-space: nowrap;
 }
 
 .powered-by .link::before {
@@ -255,6 +259,12 @@ input:focus {
 
 .powered-by .link:hover {
     color: var(--accent);
+}
+
+@media (max-width: 600px) {
+    .powered-by {
+        grid-template-columns: repeat(2, 1fr);
+    }
 }
 
 /* BOTTOM: centered footer */
@@ -275,6 +285,7 @@ input:focus {
     color: var(--muted);
     font-size: 0.85rem;
 }
+
 
 /* 10. Utils */
 hr {
@@ -321,7 +332,7 @@ hr {
 
 .hero-wrapper {
     margin-top: 0 !important;
-    background-image: linear-gradient(rgba(11, 18, 32, 0.8), rgba(11, 18, 32, 0.8)), 
+    background-image: linear-gradient(rgba(11, 18, 32, 0.9), rgba(11, 18, 32, 0.8)), 
         url('/static/bg.png');
     
     background-size: cover;
