@@ -6,7 +6,7 @@ matplotlib.use("Agg")
 import os
 from dotenv import load_dotenv
 from lib.stocks import stock_list_bp, add_product_bp, edit_product_bp, delete_product_bp, product_view_bp
-from lib.graphs import generate_category_distribution, generate_inventory_health_chart, generate_sales_trend_chart
+from lib.graphs import generate_category_distribution, generate_inventory_health_chart, generate_sales_trend_chart, generate_revenue_trend_chart
 from lib.line_count import get_loc as count
 from lib.connect_db import connect_db
 from lib.users import add_users_bp, edit_user_bp, users_bp
@@ -133,6 +133,7 @@ def statistics():
     sales_chart = generate_sales_trend_chart()
     dist_chart = generate_category_distribution()
     health_chart = generate_inventory_health_chart()
+    revenue_chart = generate_revenue_trend_chart()
     
     # Get some quick raw numbers for the "Counter" boxes
     conn = connect_db()
@@ -147,6 +148,7 @@ def statistics():
     return render_template(
         "statistics.html",
         sales_chart=sales_chart,
+        revenue_chart=revenue_chart,
         dist_chart=dist_chart,
         health_chart=health_chart,
         total_items=total_items,

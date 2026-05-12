@@ -72,6 +72,12 @@
                 <small style="color: var(--muted);">Vault Valuation</small>
                 <p style="font-size: 1.2rem; font-weight: bold;">${{ "{:,.2f}".format(valuation) }}</p>
             </div>
+            <div>
+                <small style="color: var(--muted);">Revenue Generated</small>
+                <p style="font-size: 1.2rem; font-weight: bold; color: #f59e0b;">
+                    ${{ "{:,.2f}".format(stats.revenue if stats else 0) }}
+                </p>
+            </div>
         </div>
     </section>
 

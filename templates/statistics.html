@@ -48,6 +48,16 @@
     </section>
 
     <div class="dashboard-grid">
+        <!-- 0. Revenue graph -->
+        <div class="chart-container full-width">
+            <h2 style="color: var(--accent); margin-bottom: 10px;">📈 Daily Revenue</h2>
+            {% if sales_chart %}
+                <img src="/{{ revenue_chart }}" class="chart-img" alt="Sales Trend">
+            {% else %}
+                <p style="color: var(--muted); padding: 40px;">No transaction data recorded yet.</p>
+            {% endif %}
+        </div>
+
         <!-- 1. SALES TREND (Line Graph) -->
         <div class="chart-container full-width">
             <h2 style="color: var(--accent); margin-bottom: 10px;">📈 Daily Transaction Volume</h2>
@@ -88,6 +98,5 @@
         </div>
     </section>
 </main>
-
 </body>
 </html>
