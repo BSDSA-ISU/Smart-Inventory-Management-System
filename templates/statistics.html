@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cyber-Vault Dashboard</title>
+    <link rel="icon" type="image/png" href="/static/logo.png">
+    <link rel="stylesheet" href="/static/style.css">
+    <style>
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-top: 20px;
+        }
+        .full-width { grid-column: span 2; }
+        .chart-container {
+            background: #020617;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 15px;
+            text-align: center;
+        }
+        .chart-img {
+            width: 100%;
+            height: auto;
+            border-radius: 8px;
+        }
+        @media (max-width: 768px) {
+            .dashboard-grid { grid-template-columns: 1fr; }
+            .full-width { grid-column: span 1; }
+        }
+    </style>
+</head>
+
+<body>
+    {% include '/partials/navbar.html' %}
+        <nav>
+            <a href="/inventory" class="basicbutton">View Inventory</a>
+        </nav>
+    </div>
+</header>
+
+<main class="container">
+    <section class="hero">
+        <h1 style="color: var(--accent);">SYSTEM OVERVIEW</h1>
+        <p style="color: var(--muted);">Real-time asset tracking & supply chain analytics.</p>
+    </section>
+
+    <div class="dashboard-grid">
+        <!-- 1. SALES TREND (Line Graph) -->
+        <div class="chart-container full-width">
+            <h2 style="color: var(--accent); margin-bottom: 10px;">📈 Daily Transaction Volume</h2>
+            {% if sales_chart %}
+                <img src="/{{ sales_chart }}" class="chart-img" alt="Sales Trend">
+            {% else %}
+                <p style="color: var(--muted); padding: 40px;">No transaction data recorded yet.</p>
+            {% endif %}
+        </div>
+
+        <!-- 2. CATEGORY DISTRIBUTION-->
+        <div class="chart-container full-width">
+            <h2 style="color: var(--accent); margin-bottom: 10px;">📦 Stock by Category</h2>
+            {% if dist_chart %}
+                <img src="/{{ dist_chart }}" class="chart-img" alt="Category Distribution">
+            {% else %}
+                <p style="color: var(--muted); padding: 40px;">No products found.</p>
+            {% endif %}
+        </div>
+
+        <!-- 3. INVENTORY HEALTH-->
+        <div class="chart-container full-width">
+            <h2 style="color: #ef4444; margin-bottom: 10px;">⚠️ Critical Stock Alerts</h2>
+            {% if health_chart %}
+                <img src="/{{ health_chart }}" class="chart-img" alt="Inventory Health">
+            {% else %}
+                <p style="color: var(--muted); padding: 40px;">All stock levels healthy.</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- QUICK ACTIONS -->
+    <section class="card" style="margin-top: 30px; text-align: center;">
+        <h2>Quick Operations</h2>
+        <div style="display: flex; justify-content: center; gap: 15px; margin-top: 15px;">
+            <a href="/add_product" class="project-btn" style="flex: 1;">➕ Vault New Item</a>
+            <a href="/inventory" class="project-btn secondary" style="flex: 1;">🔍 Search Catalog</a>
+        </div>
+    </section>
+</main>
+
+</body>
+</html>

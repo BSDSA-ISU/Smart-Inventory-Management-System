@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="/static/logo.png">
+
+    <title>Inventory Management - Warehouse Stock</title>
+
+    <link rel="stylesheet" href="/static/style.css">
+    <meta name="google" content="notranslate">
+</head>
+<body>
+    {% include '/partials/navbar.html' %}
+            <nav>
+                <a href="/" class="basicbutton">Home</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container" style="max-width: 900px;">
+        <section class="card">
+            <!-- Search Form Area -->
+            <form method="GET" action="/inventory" class="form" style="margin-bottom: 30px;">
+                <h2 style="color: var(--accent); margin-bottom: 15px;">Search Inventory</h2>
+                <div style="display: flex; gap: 10px;">
+                    <input 
+                        type="text" 
+                        name="search" 
+                        placeholder="Search by Product Name or SKU..." 
+                        value="{{ search }}"
+                        style="flex: 1; margin-bottom: 0;"
+                    >
+                    <button type="submit" style="width: auto; padding: 0 25px;">Search</button>
+                </div>
+            </form>
+
+            <hr style="margin: 20px 0; opacity: 0.3;">
+
+            <!-- Product List Header -->
+            <div style="display: flex; justify-content: space-between; padding: 0 15px; margin-bottom: 10px; color: var(--muted); font-size: 0.9rem; font-weight: bold;">
+                <span style="flex: 2;">Product Details</span>
+                <span style="flex: 1; text-align: center;">In Stock</span>
+                <span style="flex: 1; text-align: right;">Action</span>
+            </div>
+
+            <!-- Product List Area -->
+            <ul class="athlete-list" style="padding: 0;">
+                {% for p in products %}
+                    <li style="display: flex; justify-content: space-between; align-items: center; padding: 15px; border-bottom: 1px solid var(--border); transition: 0.2s; border-radius: 8px;">
+                        
+                        <div style="flex: 2;">
+                            <a href="/product/{{ p[0] }}" style="font-weight: 600; text-decoration: none; font-size: 1.1rem; color: var(--text);">
+                                {{ p[1] }}
+                            </a>
+                            <div style="font-size: 0.8rem; color: var(--muted);">SKU: {{ p[2] }}</div>
+                        </div>
+
+                        <!-- Smart Stock Indicator -->
+                        <div style="flex: 1; text-align: center;">
+                            {% if p[3] <= p[4] %}
+                                <span style="color: #ff4444; font-weight: bold;">{{ p[3] }} (LOW)</span>
+                            {% else %}
+                                <span style="color: var(--accent);">{{ p[3] }}</span>
+                            {% endif %}
+                        </div>
+
+                        <div style="flex: 1; text-align: right;">
+                            <form action="/delete_product/{{ p[0] }}" method="POST" style="margin: 0;">
+                                <button type="submit" class="small-delete-btn" 
+                                        style="padding: 6px 12px; font-size: 0.8rem; background: rgba(239, 68, 68, 0.1);" 
+                                        onclick="return confirm('Remove {{ p[1] }} from inventory? This cannot be undone.')">
+                                    🗑 Delete
+                                </button>
+                            </form>
+                        </div>
+                    </li>
+                {% else %}
+                    <li style="text-align: center; color: var(--muted); padding: 40px;">
+                        No products found matching your search.
+                    </li>
+                {% endfor %}
+            </ul>
+        </section>
+    </main>
+</body>
+</html>

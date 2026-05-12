@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Athlete Dashboard</title>
+    <title>Smart Inventory Vault</title>
 
     <link rel="icon" type="image/png" href="/static/logo.png">
     <link rel="stylesheet" href="/static/style.css">
@@ -19,17 +19,17 @@
             <img src="{{ '/static/admin.jpg' if current_user.role == 'admin' or current_user.role == 'owner' else '/static/logo.png' }}" style="border-radius: 50%;">
             {% if current_user.is_authenticated %}
                 {% if current_user.role == 'admin' %}
-                    <span style="color: pink; font-weight: bold;">Welcome back, {{ current_user.name }} onee-chan!!</span>
+                    <span style="color: pink;">Welcome back, {{ current_user.name }} onee-chan!!</span>
                 {% elif current_user.role == 'owner' %}
-                    <span style="color: #ff69b4; font-weight: 700; text-shadow: 0 0 6px #ffb6c1;">
-                      Welcome home, {{ current_user.name }} my dear master 💕
+                    <span style="color: #ff69b4">
+                      Hello, Owner
                     </span>
                 {% else %}
                     <span>Welcome, {{ current_user.name }}!</span>
                 {% endif %}
                     <a href="/logout">Logout</a>
             {% else %}
-                <span>Dashboard</span>
+                <span>Inventory Vault</span>
                 <a href="/login">Login</a>
             {% endif %}
         </div>
@@ -37,10 +37,10 @@
             <div class="dropdown">
               <button class="dropbtn">Menu</button>
               <div class="dropdown-content">
-                <a href="/athletes">View Athletes</a>
-                <a href="/">Home</a>
+                <a href="/inventory">View Stock</a>
                 {% if current_user.is_authenticated %}
-                    <a href="/add">Add Athlete</a>
+                    <a href="/add_product">Add Product</a>
+                    <a href="/statistics">Statistics</a>
                 {% endif %}
               </div>
             </div>
@@ -51,14 +51,14 @@
 <section class="hero-wrapper">
     <div class="container">
         <section class="hero">
-            <h1 id="home">Welcome to the Athlete System</h1>
-            <p>Servicing athlete logs, calories and graphs since our professor anounced it.</p>
+            <h1 id="home">Welcome to the Smart Inventory Vault</h1>
+            <p>High-performance logistics, asset tracking, and stock analytics since the deadline was announced.</p>
             <img class="mascot kaguya Houraisan" src="/static/Kaguya.gif">
-            <p style="font-size: small; color: gray;">Kaguya Houraisan</p>
+            <p style="font-size: small; color: gray;">Kaguya Houraisan - Head of Vault Security</p>
         </section>
 
         <div class="hero">
-            <a href="#features" class="explore-btn">Explore!</a>
+            <a href="#features" class="explore-btn">Explore Vault!</a>
         </div>
     </div>
 </section>
@@ -67,66 +67,68 @@
 
     <section class="card instruction-box">
         <div class="hero">
-            <h2 style="color: var(--accent);">Info</h2>
-            <p>Providing a decent system to track Athletes on their diets.</p>
-            <p><strong>Current logged Users:</strong> {{ usercount[0] }}</p> <!-- Looked best here -->
+            <h2 style="color: var(--accent);">Vault Analytics</h2>
+            <p>Providing real-time oversight of warehouse assets and supply chains.</p>
+            <p><strong>Unique SKUs in System:</strong> {{ product_count }}</p> 
+            
+            {% if low_stock_alert > 0 %}
+            <div style="margin-top: 15px; border: 1px solid #ff4444; padding: 10px; border-radius: 8px; background: rgba(255,0,0,0.05);">
+                <p style="color: #ff4444; font-weight: bold; margin: 0;">⚠️ RESTOCK ALERT: {{ low_stock_alert }} items are below minimum threshold!</p>
+            </div>
+            {% endif %}
         </div>
     </section>
 
     <section class="container">
         <div class="hero">
-            <h2 id="features" style="color: var(--accent);">Features</h2>
-            <p>This system provides a basic functionality to track athletes.</p>
+            <h2 id="features" style="color: var(--accent);">System Capabilities</h2>
+            <p>Advanced backend logic tailored for business efficiency.</p>
         </div>
 
         <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 20px;">
 
             <div class="card" style="flex: 1 1 300px; max-width: 400px;">
                 <i class="icon-arrow-down-circle icon" style="color: var(--accent); font-size: 2rem;"></i>
-                <h4 style="margin-top: 15px;">Optimized for Best Performance</h4>
+                <h4 style="margin-top: 15px;">Optimized Backend Architecture</h4>
                 <p style="color: var(--muted); margin-top: 10px;">
-                    Optimized with Python's Gunicorn and Flask PyMySQL library, providing quick queries and requests.
+                    Powered by Python's Gunicorn and Flask PyMySQL, ensuring rapid stock updates and minimal latency.
                 </p>
             </div>
 
             <div class="card" style="flex: 1 1 300px; max-width: 400px;">
                 <i class="la la-code icon" style="color: var(--accent); font-size: 2rem;"></i>
-                <h4 style="margin-top: 15px;">Basic CRUD Operations</h4>
+                <h4 style="margin-top: 15px;">Smart Stock Control</h4>
                 <p style="color: var(--muted); margin-top: 10px;">
-                    Basic Create, Read, Update, and Delete operations you can use!
+                    Full CRUD capabilities for managing products, suppliers, and stock levels with automated reorder flags.
                 </p>
             </div>
 
             <div class="card" style="flex: 1 1 300px; max-width: 400px;">
                 <i class="icon-lock icon" style="color: var(--accent); font-size: 2rem;"></i>
-                <h4 style="margin-top: 15px;">User Login</h4>
+                <h4 style="margin-top: 15px;">Secure Access Management</h4>
                 <p style="color: var(--muted); margin-top: 10px;">
-                    Simple permission management to manage users securely.
+                    Multi-role permission system (Staff, Admin, Owner) to protect sensitive business data.
                 </p>
             </div>
 
             <div class="card" style="flex: 1 1 300px; max-width: 400px;">
                 <i class="icon-lock icon" style="color: var(--accent); font-size: 2rem;"></i>
-                <h4 style="margin-top: 15px;">Basic Graph Visualizations</h4>
+                <h4 style="margin-top: 15px;">Visual Inventory Trends</h4>
                 <p style="color: var(--muted); margin-top: 10px;">
-                    shows Simple Visualiation graphs using python's matplotlib Library ensuring fast graph generation.
+                    Dynamic Matplotlib integration providing clear visualizations of stock movement and sales demand.
                 </p>
             </div>
 
         </div>
     </section>
-    {% if current_user.role == 'owner' %}
-        {% include 'partials/ownerdev.html' %}
-    {% endif %}
 
     <section class="container">
         <div class="hero">
             <h2 id="members" style="color: var(--accent);">Development Team</h2>
-            <p>The developers behind the Athlete System.</p>
+            <p>The architects behind the Smart Inventory System.</p>
         </div>
 
-    {% include '/partials/devteam.html' %}
-
+        {% include '/partials/devteam.html' %}
     </section>
 
 </main>
@@ -144,14 +146,13 @@
             <a href="https://mariadb.org/" target="_blank" class="link"> Mariadb</a>
             <a href="https://www.mysql.com/products/community/" target="_blank" class="link"> MySQL Community Edition</a>
         </div>
-
     </div>
     <div class="footer-bottom">
     <small>
         Copyright (c) 2026 Cyrus Troy and BSDSA-ISU <br>
         Licensed under the MIT License
         <br>
-        Touhou Project © Team Shanghai Alice (ZUN). Fan content mascot is used for educational purposes only.
+        Touhou Project © Team Shanghai Alice (ZUN). Educational fan content mascot.
     </small>
     </div>
 </footer>

@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Vault New Product - Smart Inventory</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="icon" type="image/png" href="/static/logo.png">
+</head>
+<body>
+
+    {% include '/partials/navbar.html' %}
+            <nav>
+                <a href="/" class="basicbutton">Home</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container" style="max-width: 600px;">
+
+        <section class="card">
+            <h2 style="color: var(--accent);">📦 Vault New Product</h2>
+            <p style="color: var(--muted); margin-bottom: 20px;">Enter product details to initialize tracking.</p>
+
+            <form method="POST" class="form">
+                <!-- Identification -->
+                <label style="font-size: 0.8rem; color: var(--accent);">Product Name</label>
+                <input name="product_name" placeholder="e.g. Mechanical Keyboard" required>
+                
+                <label style="font-size: 0.8rem; color: var(--accent);">SKU Code (Unique ID)</label>
+                <input name="sku_code" placeholder="e.g. TECH-KB-001" required>
+
+                <!--Product category-->
+                <select name="category" required>
+                    <option value="" disabled selected>Select Category</option>
+                    <option value="Electronics">Electronics</option>
+                    <option value="Hardware">Hardware</option>
+                    <option value="Office Supplies">Office Supplies</option>
+                    <option value="Perishables">Perishables</option>
+                    <option value="Accessories">Accessories</option>
+                </select>
+
+                <!-- Financials & Stock -->
+                <div style="display: flex; gap: 10px;">
+                    <div style="flex: 1;">
+                        <label style="font-size: 0.8rem; color: var(--accent);">Unit Price ($)</label>
+                        <input name="unit_price" type="number" step="0.01" placeholder="0.00" required>
+                    </div>
+                    <div style="flex: 1;">
+                        <label style="font-size: 0.8rem; color: var(--accent);">Initial Stock</label>
+                        <input name="current_stock" type="number" placeholder="0" required>
+                    </div>
+                </div>
+            
+                <!-- THE SMART FEATURE -->
+                <label style="font-size: 0.8rem; color: #ffbc00;">⚠️ Min. Stock Threshold (Alert Level)</label>
+                <input name="min_stock_level" type="number" placeholder="Alert me when stock hits..." required>
+            
+                <button type="submit" style="margin-top: 20px;">Add to Inventory</button>
+            </form>
+        
+        </section>
+
+    </main>
+
+</body>
+</html>

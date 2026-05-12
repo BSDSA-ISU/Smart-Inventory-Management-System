@@ -1,61 +1,62 @@
-CREATE TABLE IF NOT EXISTS athletes (
-    athlete_id INT AUTO_INCREMENT PRIMARY KEY,
-    username VARCHAR(100) UNIQUE NOT NULL, -- Added for login
-    password VARCHAR(255) NOT NULL,        -- Added for login
-    role ENUM('admin', 'user', 'owner') DEFAULT 'user', -- Added for permissions
-    name VARCHAR(100) NOT NULL,            -- Kept separate as requested
-    age INT,
-    sex ENUM('Male', 'Female', 'Other'),
-    weight DECIMAL(5,2),
-    height DECIMAL(5,2),
+-- 1. USER & PRODUCT MANAGEMENT
+-- Repurposed from 'athletes'
+CREATE TABLE IF NOT EXISTS users (
+    user_id INT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(100) UNIQUE NOT NULL,
+    password VARCHAR(255) NOT NULL,
+    role ENUM('admin', 'staff', 'owner') DEFAULT 'staff',
+    full_name VARCHAR(100) NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE IF NOT EXISTS nutrition_logs (
-    nutrition_id INT AUTO_INCREMENT PRIMARY KEY,
-    athlete_id INT NOT NULL,
-    meal_type VARCHAR(50),
-    calories INT NOT NULL,
-    protein DECIMAL(5,2),
-    carbs DECIMAL(5,2),
-    fats DECIMAL(5,2),
-    log_date DATE NOT NULL,
-    FOREIGN KEY (athlete_id) REFERENCES athletes(athlete_id) ON DELETE CASCADE
+-- The core of the system
+CREATE TABLE IF NOT EXISTS products (
+    product_id INT AUTO_INCREMENT PRIMARY KEY,
+    sku_code VARCHAR(50) UNIQUE NOT NULL, -- "Stock Keeping Unit"
+    product_name VARCHAR(100) NOT NULL,
+    category VARCHAR(50),
+    unit_price DECIMAL(10,2) NOT NULL,
+    current_stock INT DEFAULT 0,
+    min_stock_level INT DEFAULT 10, -- THE "SMART" FEATURE: Reorder point
+    supplier_id INT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE IF NOT EXISTS training_sessions (
-    session_id INT AUTO_INCREMENT PRIMARY KEY,
-    athlete_id INT NOT NULL,
-    session_type VARCHAR(50),
-    duration_minutes INT NOT NULL,
-    intensity ENUM('Low', 'Medium', 'High'),
-    calories_burned INT,
-    session_date DATE NOT NULL,
-    FOREIGN KEY (athlete_id) REFERENCES athletes(athlete_id) ON DELETE CASCADE
+-- 2. STOCK MOVEMENTS (Repurposed from 'nutrition_logs' / 'training_sessions')
+-- Tracks every time items come in or go out
+CREATE TABLE IF NOT EXISTS inventory_transactions (
+    transaction_id INT AUTO_INCREMENT PRIMARY KEY,
+    product_id INT NOT NULL,
+    user_id INT NOT NULL, -- Who performed the action?
+    transaction_type ENUM('IN', 'OUT', 'ADJUSTMENT') NOT NULL,
+    quantity INT NOT NULL,
+    reason VARCHAR(255), -- e.g., "Customer Sale", "Restock", "Damaged Goods"
+    transaction_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (product_id) REFERENCES products(product_id) ON DELETE CASCADE,
+    FOREIGN KEY (user_id) REFERENCES users(user_id)
 );
 
-CREATE TABLE IF NOT EXISTS recovery_logs (
-    recovery_id INT AUTO_INCREMENT PRIMARY KEY,
-    athlete_id INT NOT NULL,
-    sleep_hours DECIMAL(4,1), -- Increased to 4,1 just in case of precision
-    soreness_level INT,
-    stress_level INT,
-    recovery_score INT,
-    log_date DATE NOT NULL,
-    FOREIGN KEY (athlete_id) REFERENCES athletes(athlete_id) ON DELETE CASCADE
+-- 3. SALES & REVENUE (Repurposed from 'goals')
+-- This is what business owners look at
+CREATE TABLE IF NOT EXISTS sales_analytics (
+    sale_id INT AUTO_INCREMENT PRIMARY KEY,
+    product_id INT NOT NULL,
+    quantity_sold INT NOT NULL,
+    total_price DECIMAL(10,2) NOT NULL,
+    sale_date DATE NOT NULL,
+    FOREIGN KEY (product_id) REFERENCES products(product_id)
 );
 
-CREATE TABLE IF NOT EXISTS goals (
-    goal_id INT AUTO_INCREMENT PRIMARY KEY,
-    athlete_id INT NOT NULL,
-    goal_type VARCHAR(50),
-    target_value DECIMAL(6,2),
-    current_value DECIMAL(6,2),
-    start_date DATE,
-    end_date DATE,
-    FOREIGN KEY (athlete_id) REFERENCES athletes(athlete_id) ON DELETE CASCADE
+-- 4. SUPPLIER MANAGEMENT
+CREATE TABLE IF NOT EXISTS suppliers (
+    supplier_id INT AUTO_INCREMENT PRIMARY KEY,
+    supplier_name VARCHAR(100) NOT NULL,
+    contact_person VARCHAR(100),
+    email VARCHAR(100),
+    lead_time_days INT -- How many days it takes for stock to arrive
 );
 
+-- Keep your team_members table exactly as it is for your "About Us" page!
 CREATE TABLE IF NOT EXISTS team_members (
     id INT AUTO_INCREMENT PRIMARY KEY,
     full_name VARCHAR(100) NOT NULL,
@@ -82,55 +83,11 @@ VALUES
     'https://github.com/Alieelinux', 
     'https://www.facebook.com/KoishiKomeiji0', 
     '#ff00ea' -- Pink
-),
-(
-    'Rens Joshua Serrano', 
-    'Arrrjiiiiiii', 
-    'Provides the System Title', 
-    'DSA student from Alicia Isabela.', 
-    '/static/members/renz.png', 
-    NULL, 
-    'https://www.facebook.com/Arrrjiiiiiii', 
-    '#c588ff' -- Violet
-),
-(
-    'Seb Salamatin', 
-    'sebastiengabriel.buenosalamatin#', 
-    'Low Cortisol Member', 
-    'not provided.', 
-    '/static/members/seb.jpg', 
-    NULL, 
-    'https://www.facebook.com/sebastiengabriel.buenosalamatin#', 
-    '#ffffff'
-),
-(
-    'Jl Imperial', 
-    'jhae.elle12', 
-    'Tester', 
-    'Not provided.', 
-    '/static/members/jl.jpg', 
-    NULL, 
-    'https://www.facebook.com/jhae.elle12', 
-    '#00ffff'
-);
-
-insert INTO athletes (
-    username,
-    password,
-    role,
-    name,
-    age,
-    sex,
-    weight,
-    height
 )
-VALUES (
-    "admin",
-    "admin",
-    "admin",
-    "name admin",
-    9999,
-    "Female",
-    999.00,
-    999.00
+
+insert into users (
+    "owner",
+    "owner",
+    'admin',
+    "I'm the owner",
 )

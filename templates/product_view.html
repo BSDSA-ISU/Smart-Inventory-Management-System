@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ product[0] }} - Technical Sheet</title>
+    <link rel="icon" type="image/png" href="/static/logo.png">
+    <link rel="stylesheet" href="/static/style.css">
+    <style>
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+        .multi-box {
+            padding: 12px;
+            background: rgba(255,255,255,0.03);
+            border-radius: 8px;
+            border-left: 3px solid var(--accent);
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .status-badge {
+            font-size: 0.7rem;
+            padding: 4px 8px;
+            border-radius: 4px;
+            text-transform: uppercase;
+        }
+    </style>
+</head>
+
+<body>
+    {% include '/partials/navbar.html' %}
+        <nav><a href="/" class="basicbutton">Home</a></nav>
+    </div>
+</header>
+
+<main class="container">
+    
+    <!-- PRODUCT HERO -->
+    <section class="hero">
+        <h1 style="margin-bottom: 10px; color: var(--accent);">{{ product[0] }}</h1>
+        <div style="display: flex; justify-content: center; gap: 20px; color: var(--muted); font-weight: 500;">
+            <span>SKU: <b style="color: var(--text);">{{ product[1] }}</b></span>
+            <span>Category: <b style="color: var(--text);">{{ product[2] }}</b></span>
+            <span>Unit Price: <b style="color: #10b981;">${{ "{:,.2f}".format(product[3]) }}</b></span>
+        </div>
+    
+        <div style="margin-top: 20px;">
+            <a href="/edit_product/{{ product_id }}" class="explore-btn secondary" style="font-size: 0.9rem;">
+                ✏️ Edit Product / Log Transaction
+            </a>
+        </div>
+    </section>
+
+    <!-- INVENTORY METRICS -->
+    <section class="card instruction-box">
+        <h2 style="color: var(--accent);">📊 Stock Intelligence</h2>
+        <div class="stats-grid">
+            <div>
+                <small style="color: var(--muted);">Total Restocked</small>
+                <p style="font-size: 1.2rem; font-weight: bold; color: #10b981;">+{{ total_in }}</p>
+            </div>
+            <div>
+                <small style="color: var(--muted);">Total Sold</small>
+                <p style="font-size: 1.2rem; font-weight: bold; color: #ef4444;">-{{ total_out }}</p>
+            </div>
+            <div>
+                <small style="color: var(--muted);">Vault Valuation</small>
+                <p style="font-size: 1.2rem; font-weight: bold;">${{ "{:,.2f}".format(valuation) }}</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- TRANSACTION LOGS (Replacing Goals/Logs) -->
+    <section class="card">
+        <h2 style="margin-bottom: 15px;">📜 Transaction History</h2>
+    
+        {% if history %}
+            {% for h in history %}
+                <div class="multi-box">
+                    <div>
+                        <span class="status-badge" style="background: {% if h[0] == 'IN' %}rgba(16,185,129,0.2); color: #10b981;{% else %}rgba(239,68,68,0.2); color: #ef4444;{% endif %}">
+                            {{ h[0] }}
+                        </span>
+                        <b style="margin-left: 10px;">{{ h[1] }} Units</b>
+                        <p style="color: var(--muted); font-size: 0.8rem; margin-top: 5px;">Reason: {{ h[2] }}</p>
+                    </div>
+                    <div style="text-align: right;">
+                        <p style="color: var(--muted); font-size: 0.8rem;">{{ h[3] }}</p>
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <p style="color: var(--muted); text-align: center; padding: 20px;">No transaction logs found in vault.</p>
+        {% endif %}
+    </section>
+
+    <!-- BACK BUTTON -->
+    <div style="margin: 40px 0; text-align: center;">
+        <a href="/inventory" style="color: var(--muted); text-decoration: none; font-size: 0.9rem;">
+            ← Return to Inventory Directory
+        </a>
+    </div>
+
+</main>
+</body>
+</html>

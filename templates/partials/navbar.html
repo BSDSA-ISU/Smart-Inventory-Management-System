@@ -4,9 +4,9 @@
             <img src="{{ '/static/admin.jpg' if current_user.role == 'admin' or current_user.role == 'owner' else '/static/logo.png' }}" style="border-radius: 50%;">
             {% if current_user.is_authenticated %}
                 {% if current_user.role == 'admin' %}
-                    <span style="color: pink; font-weight: bold;">{{ title }}</span>
+                    <span style="color: pink;">{{ title }}</span>
                 {% elif current_user.role == 'owner' %}
-                    <span style="color: #ff69b4; font-weight: 700; text-shadow: 0 0 6px #ffb6c1;">
+                    <span style="color: #ff69b4;">
                       {{ title }}
                     </span>
                 {% else %}
