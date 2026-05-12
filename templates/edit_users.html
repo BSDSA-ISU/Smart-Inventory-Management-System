@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit users</title>
+
+    <link rel="icon" type="image/png" href="/static/Logo_icon.png">
+    <link rel="stylesheet" href="/static/style.css">
+    <meta name="google" content="notranslate">
+
+    <style>
+        .form-group { display: flex; flex-direction: column; gap: 12px; }
+        .multi-box {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 12px;
+            padding: 20px;
+            background: #020617;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            margin-bottom: 15px;
+        }
+        .add-btn {
+            background: rgba(56, 189, 248, 0.1);
+            color: var(--accent);
+            border: 1px dashed var(--accent);
+            padding: 10px;
+            width: 100%;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: 0.2s;
+            margin-bottom: 20px;
+        }
+        .add-btn:hover { background: var(--accent); color: #000; }
+        .flash-msg {
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            list-style: none;
+            font-weight: bold;
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+    {% include '/partials/navbar.html' %}
+        <nav><a href="/" class="basicbutton">Home</a></nav>
+    </div>
+</header>
+
+<main class="container" style="max-width: 900px;">
+    <form method="POST">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            {% for category, msg in messages %}
+              <div class="flash-msg" style="background: {% if category == 'error' %}rgba(239, 68, 68, 0.1){% else %}rgba(34, 197, 94, 0.1){% endif %}; color: {% if category == 'error' %}#ef4444{% else %}#22c55e{% endif %}; border: 1px solid currentColor;">
+                {{ msg }}
+              </div>
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
+
+        <section class="card instruction-box">
+            <h2 style="color: var(--accent);">ℹ️ Instructions</h2>
+            <p>Modify the fields below. Only filled entries in the additional logs will be recorded. Click <b>"Add Another"</b> to batch-upload data.</p>
+        </section>
+
+
+        {% if current_user.role in ['admin', 'owner'] or current_user.username == user[0] %}
+        <section class="card">
+            <h2 style="margin-bottom: 15px;">👤 Staff Information</h2>
+        
+            <div class="form-group">
+            
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:15px;">
+                    <input name="username" value="{{ user[0] }}" placeholder="Username" required>
+                
+                    <input name="password"
+                           type="password"
+                           placeholder="Leave blank to keep current password">
+                </div>
+            
+                <input name="full_name"
+                       value="{{ user[2] }}"
+                       placeholder="Full Name"
+                       required>
+            
+                <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:15px;">
+                
+                    <select name="role">
+                    
+                        {% if current_user.role == 'owner' %}
+                            <option value="staff" {% if user[1]=='staff' %}selected{% endif %}>Staff</option>
+                            <option value="admin" {% if user[1]=='admin' %}selected{% endif %}>Admin</option>
+                            <option value="owner" {% if user[1]=='owner' %}selected{% endif %}>Owner</option>
+                    
+                        {% elif current_user.role == 'admin' %}
+                            <option value="staff" {% if user[1]=='staff' %}selected{% endif %}>Staff</option>
+                            <option value="admin" {% if user[1]=='admin' %}selected{% endif %}>Admin</option>
+                        {% endif %}
+                    
+                    </select>
+                
+                    <input name="annual_salary"
+                           type="number"
+                           step="0.01"
+                           value="{{ user[3] or '' }}"
+                           placeholder="Annual Salary">
+                
+                    <input name="department"
+                           value="{{ user[4] or '' }}"
+                           placeholder="Department">
+                </div>
+            
+                <input name="hire_date"
+                       type="date"
+                       value="{{ user[5] }}">
+            
+            </div>
+        </section>
+                <!-- Nutrition & Goals would follow the same multi-box pattern -->
+                <!-- Snipped for brevity, but apply the multi-box class to them as well -->
+
+                <button type="submit" class="project-btn" style="width: 100%; padding: 18px; font-size: 1.1rem; margin-top: 20px;">
+                    💾 Save All Changes
+                </button>
+            {% else %}
+                <section class="card instruction-box" style="border-left-color: #ef4444;">
+                    <h2 style="color: #ef4444;">⚠️ Access Denied</h2>
+                    <p>You do not have permission to modify this profile.</p>
+                </section>
+            {% endif %}
+    
+    </form>
+</main>
+
+<script src="/static/addentry.js">
+</script>
+</body>
+</html>

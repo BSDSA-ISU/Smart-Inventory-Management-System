@@ -1,25 +1,15 @@
-from datetime import datetime
 from flask import Flask, render_template, request, redirect, flash, g
-import time
-import importlib
 from flask_login import LoginManager, UserMixin, current_user, login_manager, login_user, login_required, logout_user
 import matplotlib
+from werkzeug.security import check_password_hash
 matplotlib.use("Agg")
 import os
-import sys
-import pymysql
 from dotenv import load_dotenv
-from lib.nutrition import nutrition_bp, edit_nutrition_single_bp
-from lib.recovery import recovery_bp, edit_recovery_single_bp
-from lib.training import training_bp, edit_training_single_bp
 from lib.stocks import stock_list_bp, add_product_bp, edit_product_bp, delete_product_bp, product_view_bp
 from lib.graphs import generate_category_distribution, generate_inventory_health_chart, generate_sales_trend_chart
-from lib.goals import goals_bp, edit_goals_single_bp
 from lib.line_count import get_loc as count
 from lib.connect_db import connect_db
-import platform
-import psutil
-
+from lib.users import add_users_bp, edit_user_bp, users_bp
 
 load_dotenv()
 
@@ -43,6 +33,9 @@ app.register_blueprint(add_product_bp)
 app.register_blueprint(edit_product_bp)
 app.register_blueprint(delete_product_bp)
 app.register_blueprint(product_view_bp)
+app.register_blueprint(edit_user_bp)
+app.register_blueprint(users_bp)
+app.register_blueprint(add_users_bp)
 
 # Updated User class - Cleaner and matches the new 'users' table
 class User(UserMixin):
@@ -56,7 +49,6 @@ class User(UserMixin):
 def load_user(user_id):
     conn = connect_db()
     cur = conn.cursor()
-    # Query the 'users' table instead of 'athletes'
     cur.execute("SELECT user_id, username, role, full_name FROM users WHERE user_id = %s", (user_id,))
     user_data = cur.fetchone()
     conn.close()
@@ -71,16 +63,21 @@ def login():
         password = request.form["password"]
         conn = connect_db()
         cur = conn.cursor()
-        cur.execute("SELECT user_id, username, password, role, full_name FROM users WHERE username = %s", (username,))
-        user_data = cur.fetchone()
+        cur.execute("""
+            SELECT user_id, username, password, role, full_name
+            FROM users
+            WHERE username = %s
+        """, (username,))
+
+        user = cur.fetchone()
         conn.close()
 
         # Simple password check (consider hashing later if you have time!)
-        if user_data and user_data[2] == password:
-            user_obj = User(user_data[0], user_data[1], user_data[3], user_data[4])
-            login_user(user_obj)
+        if user and check_password_hash(user[2], password):
+            login_user(User(user[0], user[1], user[2], user[3]))
             return redirect("/")
-        flash("Invalid credentials", "error")
+        else:
+            flash("❌ Invalid credentials", "error")
     return render_template("login.html")
 
 # Logout
@@ -105,13 +102,28 @@ def index():
 
     cur.execute("SELECT * FROM team_members")
     members = cur.fetchall()
+    cur.execute("""
+        SELECT
+            h.action_type,
+            h.description,
+            h.created_at,
+            u.username
+        FROM history_logs h
+        JOIN users u ON h.user_id = u.user_id
+        ORDER BY h.created_at DESC
+        LIMIT 7
+    """)
+
+    recent_logs = cur.fetchall()
 
     conn.close()
 
     return render_template("index.html", 
     product_count=product_count, 
     low_stock_alert=low_stock_count, 
-    members=members)
+    members=members,
+    recent_logs=recent_logs
+    )
 
 
 @app.route("/statistics")

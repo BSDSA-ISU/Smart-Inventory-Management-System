@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Employee</title>
+    <link rel="icon" type="image/png" href="/static/Logo_icon.png">
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+
+<body>
+
+{% include '/partials/navbar.html' %}
+
+<nav>
+    <a href="/users" class="basicbutton">Back</a>
+</nav>
+
+</div>
+</header>
+
+<main class="container" style="max-width: 700px;">
+
+    <section class="card">
+
+        <h2 style="color: var(--accent); margin-bottom: 20px;">
+            ➕ Add New Employee
+        </h2>
+
+        <form method="POST" class="form">
+
+            <input name="username" placeholder="Username" required>
+
+            <input name="password" type="password" placeholder="Password" required>
+
+            <input name="full_name" placeholder="Full Name" required>
+
+            <select name="role" required>
+                <option value="staff">Staff</option>
+                <option value="admin">Admin</option>
+                {% if current_user.role == 'owner' %}
+                    <option value="owner">Owner</option>
+                {% endif %}
+            </select>
+
+            <input name="department" placeholder="Department (e.g. Warehouse)">
+
+            <input name="annual_salary" type="number" step="0.01" placeholder="Annual Salary">
+
+            <input name="hire_date" type="date">
+
+            <button type="submit" class="project-btn" style="width:100%;">
+                💾 Save Employee
+            </button>
+
+        </form>
+
+    </section>
+
+</main>
+
+</body>
+</html>

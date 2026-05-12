@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="/static/Logo_icon.png">
+
+    <title>User List - Dashboard</title>
+
+    <link rel="stylesheet" href="/static/style.css">
+    <meta name="google" content="notranslate">
+</head>
+
+<body>
+
+    {% include '/partials/navbar.html' %}
+
+    <nav>
+        <a href="/" class="basicbutton">Home</a>
+    </nav>
+
+</div>
+</header>
+
+<main class="container" style="max-width: 800px;">
+
+    <section class="card">
+
+        <!-- SEARCH AREA -->
+        <form method="GET" action="/users" class="form" style="margin-bottom: 30px;">
+            <h2 style="color: var(--accent); margin-bottom: 15px;">Search Users</h2>
+
+            <div style="display: flex; gap: 10px;">
+                <input 
+                    type="text" 
+                    name="search" 
+                    placeholder="Search by name..." 
+                    value="{{ search }}"
+                    style="flex: 1; margin-bottom: 0;"
+                >
+                <button type="submit" style="width: auto; padding: 0 25px;">Search</button>
+            </div>
+        </form>
+
+        <hr style="margin: 20px 0; opacity: 0.3;">
+
+        <!-- USER LIST -->
+        <ul class="athlete-list" style="padding: 0;">
+
+            {% for u in users %}
+
+                <li style="display: flex; justify-content: space-between; align-items: center; padding: 15px; border-bottom: 1px solid var(--border); transition: 0.2s; border-radius: 8px;">
+
+                    <!-- USER LINK -->
+                    <a href="/users/edit/{{ u[0] }}" 
+                       style="font-weight: 600; text-decoration: none; font-size: 1.1rem; color: var(--text);">
+
+                        {{ u[1] }} 
+                        <span style="opacity: 0.6;">(@{{ u[2] }})</span>
+                        <span style="opacity: 0.8;"> - {{ u[3] }}</span>
+
+                    </a>
+
+                </li>
+
+            {% else %}
+
+                <li style="text-align: center; color: var(--muted); padding: 40px;">
+                    No users found matching your search.
+                </li>
+
+            {% endfor %}
+
+        </ul>
+
+    </section>
+
+</main>
+
+</body>
+</html>

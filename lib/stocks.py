@@ -1,6 +1,7 @@
 from lib.connect_db import connect_db
 from flask import Blueprint, render_template, request, redirect, flash, url_for
 from flask_login import login_required, current_user
+from lib.history import add_history
 
 # Updated Blueprints
 stock_list_bp = Blueprint("stock_list", __name__)
@@ -63,6 +64,12 @@ def add_product():
                 VALUES (%s, %s, %s, %s, %s, %s)
             """, (name, sku, category, price, stock, threshold))
             conn.commit()
+            add_history(
+            current_user.id,
+            "ADD_PRODUCT",
+            f"Added new product: {name}"
+            )
+
             flash("✅ Product vaulted successfully!", "success")
         except Exception as e:
             conn.rollback()
@@ -110,6 +117,11 @@ def edit_product(product_id):
                     """, (product_id, current_user.id, quantities_in[i], reasons_in[i], dates_in[i]))
                     # Auto-increment the stock in the master table
                     cur.execute("UPDATE products SET current_stock = current_stock + %s WHERE product_id = %s", (quantities_in[i], product_id))
+                    add_history(
+                current_user.id,
+                "STOCK_IN",
+                f"Added {quantities_in[i]} stock(s) to {name}"
+                    )
 
             # 4. HANDLE STOCK OUT (Sales/Orders)
             quantities_out = request.form.getlist("qty_out[]")
@@ -124,6 +136,11 @@ def edit_product(product_id):
                     """, (product_id, current_user.id, quantities_out[i], reasons_out[i], dates_out[i]))
                     # Auto-decrement the stock in the master table
                     cur.execute("UPDATE products SET current_stock = current_stock - %s WHERE product_id = %s", (quantities_out[i], product_id))
+                    add_history(
+                current_user.id,
+                "STOCK_OUT",
+                f"Sold {quantities_out[i]}x {name}"
+                    )
 
             conn.commit()
             flash("✅ Vault Inventory Synchronized!", "success")
@@ -167,6 +184,11 @@ def delete_product(product_id):
         # automatically delete related transactions and analytics!
         cur.execute("DELETE FROM products WHERE product_id=%s", (product_id,))
         conn.commit()
+        add_history(
+        current_user.id,
+        "DELETE_PRODUCT",
+        f"Deleted product ID {product_id}"
+        )
         flash("📦 Product decommissioned and removed from vault.", "success")
 
     except Exception as e:

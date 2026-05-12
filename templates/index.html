@@ -6,7 +6,7 @@
 
     <title>Smart Inventory Vault</title>
 
-    <link rel="icon" type="image/png" href="/static/logo.png">
+    <link rel="icon" type="image/png" href="/static/Logo_icon.png">
     <link rel="stylesheet" href="/static/style.css">
 
     <meta name="google" content="notranslate">
@@ -17,9 +17,11 @@
     <div class="nav-container">
         <div class="logo">
             <img src="{{ '/static/admin.jpg' if current_user.role == 'admin' or current_user.role == 'owner' else '/static/logo.png' }}" style="border-radius: 50%;">
+            
             {% if current_user.is_authenticated %}
                 {% if current_user.role == 'admin' %}
                     <span style="color: pink;">Welcome back, {{ current_user.name }} onee-chan!!</span>
+                
                 {% elif current_user.role == 'owner' %}
                     <span style="color: #ff69b4">
                       Hello, Owner
@@ -27,21 +29,36 @@
                 {% else %}
                     <span>Welcome, {{ current_user.name }}!</span>
                 {% endif %}
-                    <a href="/logout">Logout</a>
+            
+                <a href="/logout">Logout</a>
+            
             {% else %}
                 <span>Inventory Vault</span>
                 <a href="/login">Login</a>
             {% endif %}
+        
         </div>
         <nav>
             <div class="dropdown">
               <button class="dropbtn">Menu</button>
               <div class="dropdown-content">
                 <a href="/inventory">View Stock</a>
+                
+                {% if current_user.role in ['admin', 'owner'] %}
+                    <a href="/users">Manage Users</a>
+                {% endif %}
+                
                 {% if current_user.is_authenticated %}
                     <a href="/add_product">Add Product</a>
-                    <a href="/statistics">Statistics</a>
+                    <a href="/statistics">Statistics</a>    
                 {% endif %}
+
+                {% if current_user.role in ['admin', 'owner'] %}
+                        <a href="/users/add">Add Employee</a>
+                {% endif %}
+                <a href="/users/edit/{{ current_user.id }}">Profile</a>
+                </div>
+
               </div>
             </div>
         </nav>
@@ -53,8 +70,8 @@
         <section class="hero">
             <h1 id="home">Welcome to the Smart Inventory Vault</h1>
             <p>High-performance logistics, asset tracking, and stock analytics since the deadline was announced.</p>
-            <img class="mascot kaguya Houraisan" src="/static/Kaguya.gif">
-            <p style="font-size: small; color: gray;">Kaguya Houraisan - Head of Vault Security</p>
+            <img class="mascot kaguya Houraisan" src="/static/Logo_icon.png">
+            <p style="font-size: small; color: gray;">Never Forget, Never Leave</p>
         </section>
 
         <div class="hero">
@@ -77,6 +94,30 @@
             </div>
             {% endif %}
         </div>
+    </section>
+
+    <section class="card instruction-box">
+        <div class="hero">
+            <h2 style="color: var(--accent);">📜 Recent Activity</h2>
+            <p>Latest system-wide inventory actions.</p>
+        </div>
+
+        {% if recent_logs %}
+            <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 10px;">
+                {% for log in recent_logs %}
+                    <div style="padding: 10px; border: 1px solid var(--border); border-radius: 8px; background: rgba(0,0,0,0.2);">
+                        <b style="color: lime;">{{ log[3] }}</b> <!-- username -->
+                        <span style="color: var(--muted); font-size: 0.9em;">
+                            • {{ log[1] }}
+                        </span>
+                        <br>
+                        <small style="color: gray;">{{ log[2] }}</small>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p style="color: gray;">No recent activity.</p>
+        {% endif %}
     </section>
 
     <section class="container">

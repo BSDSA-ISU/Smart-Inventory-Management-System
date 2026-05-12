@@ -2,10 +2,21 @@
 -- Repurposed from 'athletes'
 CREATE TABLE IF NOT EXISTS users (
     user_id INT AUTO_INCREMENT PRIMARY KEY,
+
     username VARCHAR(100) UNIQUE NOT NULL,
-    password VARCHAR(255) NOT NULL,
-    role ENUM('admin', 'staff', 'owner') DEFAULT 'staff',
+
+    password VARCHAR(255) NOT NULL,  -- hashed password
+
     full_name VARCHAR(100) NOT NULL,
+
+    role ENUM('staff', 'admin', 'owner') DEFAULT 'staff',
+
+    department VARCHAR(100) DEFAULT NULL,
+
+    annual_salary DECIMAL(12,2) DEFAULT 0,
+
+    hire_date DATE DEFAULT NULL,
+
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -56,6 +67,21 @@ CREATE TABLE IF NOT EXISTS suppliers (
     lead_time_days INT -- How many days it takes for stock to arrive
 );
 
+CREATE TABLE IF NOT EXISTS product_stats (
+    product_id INT PRIMARY KEY,
+
+    total_in INT DEFAULT 0,
+    total_out INT DEFAULT 0,
+
+    revenue DECIMAL(12,2) DEFAULT 0.00,
+
+    stock_in_value DECIMAL(12,2) DEFAULT 0.00,
+
+    last_updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+
+    FOREIGN KEY (product_id) REFERENCES products(product_id) ON DELETE CASCADE
+);
+
 -- Keep your team_members table exactly as it is for your "About Us" page!
 CREATE TABLE IF NOT EXISTS team_members (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -68,6 +94,30 @@ CREATE TABLE IF NOT EXISTS team_members (
     facebook_link VARCHAR(255),
     accent_color VARCHAR(7) DEFAULT '#10b981' -- Emerald green default
 );
+
+
+CREATE TABLE if not exists system_logs (
+    log_id INT AUTO_INCREMENT PRIMARY KEY,
+    event VARCHAR(255),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS history_logs (
+    history_id INT AUTO_INCREMENT PRIMARY KEY,
+
+    user_id INT NOT NULL,
+
+    action_type VARCHAR(50) NOT NULL,
+
+    description TEXT NOT NULL,
+
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+    FOREIGN KEY (user_id)
+    REFERENCES users(user_id)
+    ON DELETE CASCADE
+);
+
 
 TRUNCATE TABLE team_members;
 
